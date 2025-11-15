@@ -15,47 +15,51 @@ def filter_passengers(df, survived=None, sex=None):
         df = df[df["Sex"] == "female"]
 
     tx_df = df[(df["Age"] >= 30) & (df["Age"] <= 60)]
-
-    result = tx_df.groupby(["Embarked"]).size().reset_index(name="Количество пассажиров (30–60 лет)")
+    result = tx_df.groupby("Embarked").size().reset_index(name="Количество пассажиров (30–60 лет)")
 
     return result
-
-
-st.image("titanic.jpeg")
-st.title("Данные пассажиров Титаника")
-st.write("""
-Для просмотра данных только по спасённым или погибшим, выберите соответствующий пункт из списка.
-""")
 
 
 def load_data():
     return pd.read_csv("data.csv")
 
 
-df = load_data()
+def main():
 
-s_o = st.selectbox(
-    "Значение поля Survived:",
-    options=["Любое", "Выжившие (1)", "Погибшие (0)"]
-)
+    st.image("titanic.jpeg")
+    st.title("Данные пассажиров Титаника")
+    st.write("""
+    Для просмотра данных только по спасённым или погибшим, выберите соответствующий пункт из списка.
+    """)
 
-s_s = st.selectbox(
-    "Значение поля Sex:",
-    options=["Любой", "Мужской", "Женский"]
-)
+    df = load_data()
 
-survived_param = None
-if s_o == "Выжившие (1)":
-    survived_param = 1
-elif s_o == "Погибшие (0)":
-    survived_param = 0
+    s_o = st.selectbox(
+        "Значение поля Survived:",
+        options=["Любое", "Выжившие (1)", "Погибшие (0)"]
+    )
 
-sex_param = None
-if s_s == "Мужской":
-    sex_param = "male"
-elif s_s == "Женский":
-    sex_param = "female"
+    s_s = st.selectbox(
+        "Значение поля Sex:",
+        options=["Любой", "Мужской", "Женский"]
+    )
 
-result = filter_passengers(df, survived=survived_param, sex=sex_param)
+    survived_param = None
+    if s_o == "Выжившие (1)":
+        survived_param = 1
+    elif s_o == "Погибшие (0)":
+        survived_param = 0
 
-st.dataframe(result)
+    sex_param = None
+    if s_s == "Мужской":
+        sex_param = "male"
+    elif s_s == "Женский":
+        sex_param = "female"
+
+    result = filter_passengers(df, survived=survived_param, sex=sex_param)
+
+    st.dataframe(result)
+
+
+if __name__ == "__main__":
+    main()
